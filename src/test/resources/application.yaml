@@ -1,0 +1,16 @@
+spring:
+  redis:
+    host: localhost
+    port: 16379
+  datasource:
+    driver-class-name: org.h2.Driver
+    username: sa
+    password:
+    url: jdbc:h2:mem:testDB
+  jpa:
+    show-sql: true
+    generate-ddl: true
+  h2:
+    console:
+      enabled: true
+      path: /h2-console
