@@ -4,7 +4,7 @@
 
 ### Introduce
 
-Redis 를 스프링에서 어떻게 지원하고 있는 지 살펴보고 실제 사용의 예를 테스트 코드 작성(TDD) 을 통해 알아보도록 한다.   
+Redis 를 스프링에서 어떻게 지원하고 있는 지 살펴보고 실제 사용의 예를 테스트 코드 작성(TDD) 을 통해 알아보도록 한다. (Spring Redis 2.6.1 기준)
 
 ### 실행 방법
 ```./gradlew test```    
@@ -16,8 +16,14 @@ Redis 를 스프링에서 어떻게 지원하고 있는 지 살펴보고 실제 
 
 ### Test 수행
 * RedisTemplate Operations
-  * String - opsForValue
-  * String(Hash) - opsForHash
+  * Object - opsForValue
+  * Object(Hash) - opsForHash
+  * Object(List) - opsForList
+  * Object(sorted set) - opsForZSet
+
+
+### Feature  
+* Connector 변화: Spring Redis 2.6+ 부터는 Lettuce, Jedis Connector 사용
 
 ---    
 

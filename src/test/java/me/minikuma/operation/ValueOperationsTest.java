@@ -2,17 +2,19 @@ package me.minikuma.operation;
 
 import me.minikuma.config.EmbeddedRedisConfig;
 import me.minikuma.config.EmbeddedRedisServer;
-import org.assertj.core.api.Assertions;
-import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.data.redis.DataRedisTest;
 import org.springframework.context.annotation.Import;
-import org.springframework.data.redis.core.HashOperations;
-import org.springframework.data.redis.core.RedisTemplate;
-import org.springframework.data.redis.core.ValueOperations;
+import org.springframework.data.redis.core.*;
+
+import java.util.Arrays;
+import java.util.List;
+import java.util.Set;
+
+import static org.assertj.core.api.Assertions.assertThat;
 
 @DataRedisTest
 @Import({EmbeddedRedisConfig.class, EmbeddedRedisServer.class})
@@ -24,8 +26,7 @@ public class ValueOperationsTest {
     RedisTemplate<Object, Object> redisTemplate;
 
     @Test
-    @DisplayName("Value Operation Test (기본 문자열)")
-    void string_value_operations() {
+    void string_value_operations_기본_문자열_테스트() {
         // given
         String key = "test1";
         String value = "test-value1";
@@ -38,12 +39,11 @@ public class ValueOperationsTest {
         log.info("string value operations > key 로 조회된 value : {}", findValue);
 
         // then
-        Assertions.assertThat(value).isEqualTo(findValue);
+        assertThat(value).isEqualTo(findValue);
     }
 
     @Test
-    @DisplayName("Hash Value Operation Test (기본 문자열")
-    void string_value_hash_operations() {
+    void string_value_hash_operations_기본_해시_문자열() {
         // given
         String key = "test-hash-key1";
         String value = "test-hash-value1";
@@ -57,6 +57,45 @@ public class ValueOperationsTest {
         Object findValue = hashOperations.get(key, hashKey);
         log.info("string hash value operations > key, hash key 로 조회된 value : {}", findValue);
 
-        Assertions.assertThat(findValue).isEqualTo(value);
+        assertThat(findValue).isEqualTo(value);
+    }
+
+    @Test
+    void 레디스_리스트_조작_테스트() {
+        // given
+        String masterKey = "master";
+
+        // when
+        ListOperations<Object, Object> listOperations = redisTemplate.opsForList();
+        listOperations.rightPush(masterKey, "G");
+        listOperations.rightPush(masterKey, "O");
+        listOperations.rightPush(masterKey, "O");
+        listOperations.rightPush(masterKey, "D");
+
+        List<String> expectedValue = Arrays.asList("G", "O", "O", "D");
+
+        // then
+        assertThat(listOperations.size(masterKey)).isEqualTo(4);
+        assertThat(listOperations.range(masterKey, 0, 3)).isEqualTo(expectedValue);
+    }
+
+    @Test
+    void 정렬된_set_조작_테스트() {
+        // given
+        String masterKey = "SCORE";
+
+        // when
+        ZSetOperations<Object, Object> zSet = redisTemplate.opsForZSet();
+        zSet.add(masterKey, "수학", 100);
+        zSet.add(masterKey, "언어", 10);
+        zSet.add(masterKey, "문학", 9);
+        zSet.add(masterKey, "과학", 99);
+
+        // then
+        Set<Object> score = zSet.range(masterKey, 0, 3);
+
+        // 문학 언어 과학 수학
+        assertThat(score.size()).isEqualTo(4);
+        assertThat(score.toArray()[0]).isEqualTo("문학");
     }
 }
