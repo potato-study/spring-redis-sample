@@ -1,13 +1,9 @@
 package me.minikuma.operation;
 
-import me.minikuma.config.EmbeddedRedisConfig;
-import me.minikuma.config.EmbeddedRedisServer;
 import org.junit.jupiter.api.Test;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.boot.test.autoconfigure.data.redis.DataRedisTest;
-import org.springframework.context.annotation.Import;
 import org.springframework.data.redis.core.*;
 
 import java.util.Arrays;
@@ -16,9 +12,7 @@ import java.util.Set;
 
 import static org.assertj.core.api.Assertions.assertThat;
 
-@DataRedisTest
-@Import({EmbeddedRedisConfig.class, EmbeddedRedisServer.class})
-public class ValueOperationsTest {
+public class ValueOperationsTest extends BaseTest {
 
     final Logger log = LoggerFactory.getLogger(this.getClass());
 
@@ -97,5 +91,10 @@ public class ValueOperationsTest {
         // 문학 언어 과학 수학
         assertThat(score.size()).isEqualTo(4);
         assertThat(score.toArray()[0]).isEqualTo("문학");
+    }
+
+    @Test
+    void 멀티_실행_테스트() {
+
     }
 }
