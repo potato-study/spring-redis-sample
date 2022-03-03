@@ -36,6 +36,4 @@ public class EmbeddedRedisConfig {
         template.setValueSerializer(new GenericJackson2JsonRedisSerializer());
         return template;
     }
-
-
 }
